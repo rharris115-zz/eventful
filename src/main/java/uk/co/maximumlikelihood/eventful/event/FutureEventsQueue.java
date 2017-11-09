@@ -51,7 +51,7 @@ public final class FutureEventsQueue<T extends Comparable<? super T>> implements
         return currentTime;
     }
 
-    public void schedule(T futureTime, EventTask<T> task) throws IllegalArgumentException {
+    public void schedule(T futureTime, EventTask<T> task) {
         if (Objects.isNull(futureTime)) {
             throw new NullPointerException("Future time cannot be null.");
         }
