@@ -1,17 +1,20 @@
 package uk.co.maximumlikelihood.eventful.examples;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
-import uk.co.maximumlikelihood.eventful.event.EventTask;
 import uk.co.maximumlikelihood.eventful.event.FutureEventsQueue;
 import uk.co.maximumlikelihood.eventful.process.NextEventTimeFactory;
 import uk.co.maximumlikelihood.eventful.process.SimpleRecurringEventProcess;
+import uk.co.maximumlikelihood.eventful.queue.CapacitatedEntityQueueConsumer;
+import uk.co.maximumlikelihood.eventful.queue.EntityQueue;
+import uk.co.maximumlikelihood.eventful.queue.QueueArrivalTask;
+import uk.co.maximumlikelihood.eventful.queue.QueueableEntity;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
 public class BankTeller {
 
-    private static class Customer {
+    private static class Customer implements QueueableEntity<Customer, LocalDateTime> {
 
         private static int count = 0;
 
@@ -21,23 +24,37 @@ public class BankTeller {
         public String toString() {
             return String.format("Customer: %d", id);
         }
-    }
-
-    private static class CustomerArrival implements EventTask<LocalDateTime> {
-
-        private final Customer customer = new Customer();
 
         @Override
-        public void perform(FutureEventsQueue<LocalDateTime> futureEvents) {
-            System.out.printf("New arrival %s\n", customer);
+        public void notifyArrival(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
+
+        }
+
+        @Override
+        public void notifyConsumtionStart(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
+
         }
     }
+
 
     public static void main(String[] args) {
         final FutureEventsQueue<LocalDateTime> futureEvents = FutureEventsQueue.starting(LocalDateTime.now());
 
-        final SimpleRecurringEventProcess<CustomerArrival, LocalDateTime> customerArrivalProcess
-                = new SimpleRecurringEventProcess<>(CustomerArrival::new,
+
+        final CapacitatedEntityQueueConsumer<Customer, LocalDateTime> queueConsumer
+                = new CapacitatedEntityQueueConsumer<>(NextEventTimeFactory.withElapsedTimeSupplierInUnits(new ExponentialDistribution(20.0)::sample, ChronoUnit.SECONDS),
+                () -> fe -> {
+                    System.out.println("Done!");
+                },
+                2);
+
+        final EntityQueue<Customer, LocalDateTime> queue = new EntityQueue<>(queueConsumer);
+
+        final SimpleRecurringEventProcess<QueueArrivalTask<Customer, LocalDateTime>, LocalDateTime> customerArrivalProcess
+                = new SimpleRecurringEventProcess<QueueArrivalTask<Customer, LocalDateTime>, LocalDateTime>(
+                () -> {
+                    return new QueueArrivalTask<>(new Customer(), queue);
+                },
                 NextEventTimeFactory.withElapsedTimeSupplierInUnits(new ExponentialDistribution(10.0)::sample,
                         ChronoUnit.SECONDS));
 
@@ -46,7 +63,7 @@ public class BankTeller {
         customerArrivalProcess.scheduleNext(futureEvents);
 
         while (futureEvents.hasNext() && futureEvents.getCurrentTime().isBefore(end)) {
-            System.out.printf("%s: ", futureEvents.next());
+            System.out.printf(" at t=%s\n", futureEvents.next());
         }
     }
 }
