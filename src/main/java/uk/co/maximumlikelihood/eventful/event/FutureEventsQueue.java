@@ -38,12 +38,12 @@ public final class FutureEventsQueue<T extends Comparable<? super T>> implements
     private Queue<EventWrapper> events = new PriorityQueue<>();
 
 
-    private FutureEventsQueue(T initialTime) {
-        this.currentTime = requireNonNull(initialTime, "initialTime");
+    private FutureEventsQueue(T currentTime) {
+        this.currentTime = currentTime;
     }
 
     public static <T extends Comparable<? super T>> FutureEventsQueue<T> starting(T initialTime) {
-        return new FutureEventsQueue<>(initialTime);
+        return new FutureEventsQueue<>(requireNonNull(initialTime, "initialTime"));
     }
 
     public T getCurrentTime() {
