@@ -10,11 +10,11 @@ import java.util.function.Supplier;
 
 public class SimpleRecurringEventProcess<E extends EventTask<T>, T extends Comparable<? super T>> implements RecurringEventProcess<E, T> {
 
-    private final Supplier<E> delegateFactory;
+    private final Supplier<E> nextTaskFactory;
     private final Function<T, T> nextTimeFactory;
 
     public SimpleRecurringEventProcess(Supplier<E> delegateFactory, Function<T, T> nextTimeFactory) {
-        this.delegateFactory = requireNonNull(delegateFactory, "delegateFactory");
+        this.nextTaskFactory = requireNonNull(delegateFactory, "nextTaskFactory");
         this.nextTimeFactory = requireNonNull(nextTimeFactory, "nextTimeFactory");
     }
 
@@ -29,7 +29,7 @@ public class SimpleRecurringEventProcess<E extends EventTask<T>, T extends Compa
     }
 
     @Override
-    public E nextDelegateTask(FutureEventsQueue<T> futureEvents) {
-        return delegateFactory.get();
+    public E nextEventTask(FutureEventsQueue<T> futureEvents) {
+        return nextTaskFactory.get();
     }
 }

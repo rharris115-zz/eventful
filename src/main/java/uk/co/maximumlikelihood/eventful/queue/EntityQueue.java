@@ -38,7 +38,7 @@ public final class EntityQueue<E extends QueueableEntity<E, T>, T extends Compar
         }
         E entity = queue.poll();
         consumer.consume(entity, this, futureEvents);
-        entity.notifyConsumtionStart(this, futureEvents.getCurrentTime());
+        entity.notifyConsumptionStart(this, futureEvents.getCurrentTime());
     }
 
     public Queue<E> getQueue() {
