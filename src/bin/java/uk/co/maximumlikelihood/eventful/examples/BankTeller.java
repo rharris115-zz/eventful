@@ -1,6 +1,7 @@
 package uk.co.maximumlikelihood.eventful.examples;
 
 import org.apache.commons.math3.distribution.ExponentialDistribution;
+import uk.co.maximumlikelihood.eventful.event.EventTask;
 import uk.co.maximumlikelihood.eventful.event.FutureEventsQueue;
 import uk.co.maximumlikelihood.eventful.process.SimpleRecurringEventProcess;
 import uk.co.maximumlikelihood.eventful.queue.CapacitatedEntityQueueServer;
@@ -8,9 +9,12 @@ import uk.co.maximumlikelihood.eventful.queue.EntityQueue;
 import uk.co.maximumlikelihood.eventful.queue.QueueArrivalTask;
 import uk.co.maximumlikelihood.eventful.queue.QueueableEntity;
 import uk.co.maximumlikelihood.eventful.util.ElapsedTimeFactory;
+import uk.co.maximumlikelihood.eventful.util.Suppliers;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class BankTeller {
 
@@ -42,7 +46,7 @@ public class BankTeller {
 
         @Override
         public void notifyServiceFinish(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
-            System.out.printf("%s finished being serviced at queue @t=%s\n", this, time);
+            System.out.printf("%s finished being serviced @t=%s\n", this, time);
         }
     }
 
@@ -59,13 +63,15 @@ public class BankTeller {
 
         final EntityQueue<Customer, LocalDateTime> queue = new EntityQueue<>(queueConsumer);
 
-        final SimpleRecurringEventProcess<QueueArrivalTask<Customer, LocalDateTime>, LocalDateTime> customerArrivalProcess
-                = new SimpleRecurringEventProcess<>(
-                () -> {
-                    return new QueueArrivalTask<>(new Customer(), queue);
-                },
-                ElapsedTimeFactory.withElapsedTimeSupplierInUnits(new ExponentialDistribution(10.0)::sample,
-                        ChronoUnit.SECONDS));
+        final Supplier<EventTask<LocalDateTime>> arrivals
+                = Suppliers.ofBiFunction(QueueArrivalTask::new, Customer::new, Suppliers.ofConstant(queue));
+
+        final Function<LocalDateTime, LocalDateTime> arrivalTimes
+                = ElapsedTimeFactory.withElapsedTimeSupplierInUnits(new ExponentialDistribution(10.0)::sample,
+                ChronoUnit.SECONDS);
+
+        final SimpleRecurringEventProcess<LocalDateTime> customerArrivalProcess
+                = new SimpleRecurringEventProcess<>(arrivals, arrivalTimes);
 
         final LocalDateTime end = LocalDateTime.now().plusDays(1);
 

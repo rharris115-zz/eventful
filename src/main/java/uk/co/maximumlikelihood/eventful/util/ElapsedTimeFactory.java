@@ -14,9 +14,4 @@ public final class ElapsedTimeFactory {
         final long unitNanos = unit.getDuration().getNano() + unit.getDuration().getSeconds() * 1_000_000_000L;
         return t -> t.plusNanos((long) Math.ceil(elapsedTimeSupplier.get() * unitNanos));
     }
-
-    public static Function<LocalDateTime, LocalDateTime> withRegularIntervalsInUnits(double k, TemporalUnit unit) {
-        final long unitNanos = unit.getDuration().getNano() + unit.getDuration().getSeconds() * 1_000_000_000L;
-        return t -> t.plusNanos((long) Math.ceil(k * unitNanos));
-    }
 }

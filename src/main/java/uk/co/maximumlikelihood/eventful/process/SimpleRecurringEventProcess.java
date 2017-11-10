@@ -3,23 +3,23 @@ package uk.co.maximumlikelihood.eventful.process;
 import uk.co.maximumlikelihood.eventful.event.EventTask;
 import uk.co.maximumlikelihood.eventful.event.FutureEventsQueue;
 
-import static java.util.Objects.requireNonNull;
-
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public class SimpleRecurringEventProcess<E extends EventTask<T>, T extends Comparable<? super T>> implements RecurringEventProcess<E, T> {
+import static java.util.Objects.requireNonNull;
 
-    private final Supplier<E> nextTaskFactory;
+public class SimpleRecurringEventProcess<T extends Comparable<? super T>> implements RecurringEventProcess<T> {
+
+    private final Supplier<EventTask<T>> nextTaskFactory;
     private final Function<T, T> nextTimeFactory;
 
-    public SimpleRecurringEventProcess(Supplier<E> delegateFactory, Function<T, T> nextTimeFactory) {
-        this.nextTaskFactory = requireNonNull(delegateFactory, "nextTaskFactory");
+    public SimpleRecurringEventProcess(Supplier<EventTask<T>> nextTaskFactory, Function<T, T> nextTimeFactory) {
+        this.nextTaskFactory = requireNonNull(nextTaskFactory, "nextTaskFactory");
         this.nextTimeFactory = requireNonNull(nextTimeFactory, "nextTimeFactory");
     }
 
     @Override
-    public boolean hasMoreEvents(FutureEventsQueue<T> futureEvents) {
+    public boolean hasMoreEvents(T time) {
         return true;
     }
 
@@ -29,7 +29,7 @@ public class SimpleRecurringEventProcess<E extends EventTask<T>, T extends Compa
     }
 
     @Override
-    public E nextEventTask(FutureEventsQueue<T> futureEvents) {
+    public EventTask<T> nextEventTask(FutureEventsQueue<T> futureEvents) {
         return nextTaskFactory.get();
     }
 }
