@@ -12,13 +12,13 @@ public class BankTeller {
 
     private static class CustomerArrival implements EventTask<LocalDateTime> {
         @Override
-        public void perform(FutureEventsQueue<LocalDateTime> queue) {
+        public void perform(FutureEventsQueue<LocalDateTime> futureEvents) {
             System.out.println("New arrival");
         }
     }
 
     public static final void main(String[] args) {
-        final FutureEventsQueue<LocalDateTime> queue = FutureEventsQueue.starting(LocalDateTime.now());
+        final FutureEventsQueue<LocalDateTime> futureEvents = FutureEventsQueue.starting(LocalDateTime.now());
 
         final ExponentialDistribution d = new ExponentialDistribution(10.0);
 
@@ -28,10 +28,10 @@ public class BankTeller {
 
         final LocalDateTime end = LocalDateTime.now().plusDays(1);
 
-        customerArrivalProcess.scheduleNext(queue);
+        customerArrivalProcess.scheduleNext(futureEvents);
 
-        while (queue.hasNext() && queue.getCurrentTime().isBefore(end)) {
-            System.out.printf("%s: ", queue.next());
+        while (futureEvents.hasNext() && futureEvents.getCurrentTime().isBefore(end)) {
+            System.out.printf("%s: ", futureEvents.next());
         }
     }
 }

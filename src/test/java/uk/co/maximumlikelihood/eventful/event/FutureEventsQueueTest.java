@@ -11,17 +11,17 @@ public final class FutureEventsQueueTest {
 
     @Test
     public void testCurrentTimeUpdate() {
-        FutureEventsQueue<Integer> queue = FutureEventsQueue.starting(0);
+        FutureEventsQueue<Integer> futureEvents = FutureEventsQueue.starting(0);
 
         final Integer futureTime = 10;
 
-        queue.schedule(futureTime, feq -> {
+        futureEvents.schedule(futureTime, feq -> {
         });
 
-        while (queue.hasNext()) {
-            Integer currentTime = queue.next();
+        while (futureEvents.hasNext()) {
+            Integer currentTime = futureEvents.next();
             assertEquals("", futureTime, currentTime);
-            assertEquals("", futureTime, queue.getCurrentTime());
+            assertEquals("", futureTime, futureEvents.getCurrentTime());
         }
     }
 

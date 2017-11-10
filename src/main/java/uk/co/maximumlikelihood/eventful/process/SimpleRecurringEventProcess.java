@@ -18,17 +18,17 @@ public class SimpleRecurringEventProcess<E extends EventTask<T>, T extends Compa
     }
 
     @Override
-    public boolean hasMoreEvents(FutureEventsQueue<T> queue) {
+    public boolean hasMoreEvents(FutureEventsQueue<T> futureEvents) {
         return true;
     }
 
     @Override
-    public T nextEventTime(FutureEventsQueue<T> queue) {
-        return nextTimeFactory.apply(queue.getCurrentTime());
+    public T nextEventTime(FutureEventsQueue<T> futureEvents) {
+        return nextTimeFactory.apply(futureEvents.getCurrentTime());
     }
 
     @Override
-    public E nextDelegateTask(FutureEventsQueue<T> queue) {
+    public E nextDelegateTask(FutureEventsQueue<T> futureEvents) {
         return delegateFactory.get();
     }
 }

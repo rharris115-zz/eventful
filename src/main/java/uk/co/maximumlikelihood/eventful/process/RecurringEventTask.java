@@ -14,8 +14,8 @@ public class RecurringEventTask<E extends EventTask<T>, T extends Comparable<? s
     }
 
     @Override
-    public void perform(FutureEventsQueue<T> queue) {
-        delegate.perform(queue);
-        process.scheduleNext(queue);
+    public void perform(FutureEventsQueue<T> futureEvents) {
+        delegate.perform(futureEvents);
+        process.scheduleNext(futureEvents);
     }
 }
