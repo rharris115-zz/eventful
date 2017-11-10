@@ -11,7 +11,6 @@ import java.util.function.Supplier;
 public class SimpleRecurringEventProcess<E extends EventTask<T>, T extends Comparable<? super T>> implements RecurringEventProcess<E, T> {
 
     private final Supplier<E> delegateFactory;
-
     private final Function<T, T> nextTimeFactory;
 
     public SimpleRecurringEventProcess(Supplier<E> delegateFactory, Function<T, T> nextTimeFactory) {
