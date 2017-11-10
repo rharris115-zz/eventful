@@ -34,13 +34,13 @@ public class BankTeller {
         }
     }
 
-    public static final void main(String[] args) {
+    public static void main(String[] args) {
         final FutureEventsQueue<LocalDateTime> futureEvents = FutureEventsQueue.starting(LocalDateTime.now());
 
-        final ExponentialDistribution d = new ExponentialDistribution(10.0);
-
         final SimpleRecurringEventProcess<CustomerArrival, LocalDateTime> customerArrivalProcess
-                = new SimpleRecurringEventProcess<>(CustomerArrival::new, NextTimeFactory.inUnits(() -> d.sample(), ChronoUnit.SECONDS));
+                = new SimpleRecurringEventProcess<>(CustomerArrival::new,
+                NextTimeFactory.withElapsedTimeSupplierInUnits(new ExponentialDistribution(10.0)::sample,
+                        ChronoUnit.SECONDS));
 
         final LocalDateTime end = LocalDateTime.now().plusDays(1);
 
