@@ -13,9 +13,7 @@ public interface RecurringEventProcess<E extends EventTask<T>, T extends Compara
 
     default void scheduleNext(FutureEventsQueue<T> queue) {
         if (hasMoreEvents(queue)) {
-            T nextTime = nextEventTime(queue);
-            E nextTask = nextDelegateTask(queue);
-            queue.schedule(nextTime, new RecurringEventTask<>(this, nextTask));
+            queue.schedule(nextEventTime(queue), new RecurringEventTask<>(this, nextDelegateTask(queue)));
         }
     }
 }
