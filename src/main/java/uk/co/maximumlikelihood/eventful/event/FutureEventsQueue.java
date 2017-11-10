@@ -35,7 +35,7 @@ public final class FutureEventsQueue<T extends Comparable<? super T>> implements
     }
 
     private T currentTime;
-    private Queue<EventWrapper> events = new PriorityQueue<>();
+    private final Queue<EventWrapper> events = new PriorityQueue<>();
 
 
     private FutureEventsQueue(T currentTime) {
