@@ -37,10 +37,7 @@ public final class FutureEventsQueue<T extends Comparable<? super T>> implements
 
 
     private FutureEventsQueue(T initialTime) {
-        if (Objects.isNull(initialTime)) {
-            throw new NullPointerException("Initial time cannot be null.");
-        }
-        this.currentTime = initialTime;
+        this.currentTime = Objects.requireNonNull(initialTime, "initialTime");
     }
 
     public static <T extends Comparable<? super T>> FutureEventsQueue<T> starting(T initialTime) {
@@ -52,9 +49,7 @@ public final class FutureEventsQueue<T extends Comparable<? super T>> implements
     }
 
     public void schedule(T futureTime, EventTask<T> task) {
-        if (Objects.isNull(futureTime)) {
-            throw new NullPointerException("Future time cannot be null.");
-        }
+        Objects.requireNonNull(futureTime, "futureTime");
         if (currentTime.compareTo(futureTime) >= 0) {
             throw new IllegalArgumentException(String.format("Can't schedule events in the past or present. currentTime=%s, futureTime=%s", currentTime, futureTime));
         }
