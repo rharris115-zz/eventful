@@ -3,7 +3,8 @@ package uk.co.maximumlikelihood.eventful.process;
 import uk.co.maximumlikelihood.eventful.event.EventTask;
 import uk.co.maximumlikelihood.eventful.event.FutureEventsQueue;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
+
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -14,8 +15,8 @@ public class SimpleRecurringEventProcess<E extends EventTask<T>, T extends Compa
     private final Function<T, T> nextTimeFactory;
 
     public SimpleRecurringEventProcess(Supplier<E> delegateFactory, Function<T, T> nextTimeFactory) {
-        this.delegateFactory = Objects.requireNonNull(delegateFactory, "delegateFactory");
-        this.nextTimeFactory = Objects.requireNonNull(nextTimeFactory, "nextTimeFactory");
+        this.delegateFactory = requireNonNull(delegateFactory, "delegateFactory");
+        this.nextTimeFactory = requireNonNull(nextTimeFactory, "nextTimeFactory");
     }
 
     @Override

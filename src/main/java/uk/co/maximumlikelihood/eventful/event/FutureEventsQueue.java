@@ -4,6 +4,8 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.*;
 
+import static java.util.Objects.requireNonNull;
+
 public final class FutureEventsQueue<T extends Comparable<? super T>> implements Iterator<T> {
 
     private class EventWrapper implements Comparable<EventWrapper> {
@@ -37,7 +39,7 @@ public final class FutureEventsQueue<T extends Comparable<? super T>> implements
 
 
     private FutureEventsQueue(T initialTime) {
-        this.currentTime = Objects.requireNonNull(initialTime, "initialTime");
+        this.currentTime = requireNonNull(initialTime, "initialTime");
     }
 
     public static <T extends Comparable<? super T>> FutureEventsQueue<T> starting(T initialTime) {
@@ -49,7 +51,7 @@ public final class FutureEventsQueue<T extends Comparable<? super T>> implements
     }
 
     public void schedule(T futureTime, EventTask<T> task) {
-        Objects.requireNonNull(futureTime, "futureTime");
+        requireNonNull(futureTime, "futureTime");
         if (currentTime.compareTo(futureTime) >= 0) {
             throw new IllegalArgumentException(String.format("Can't schedule events in the past or present. currentTime=%s, futureTime=%s", currentTime, futureTime));
         }
