@@ -3,12 +3,11 @@ package uk.co.maximumlikelihood.eventful.examples;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import uk.co.maximumlikelihood.eventful.event.EventTask;
 import uk.co.maximumlikelihood.eventful.event.FutureEventsQueue;
-import uk.co.maximumlikelihood.eventful.process.NextTimeFactory;
+import uk.co.maximumlikelihood.eventful.process.NextEventTimeFactory;
 import uk.co.maximumlikelihood.eventful.process.SimpleRecurringEventProcess;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 
 public class BankTeller {
 
@@ -39,7 +38,7 @@ public class BankTeller {
 
         final SimpleRecurringEventProcess<CustomerArrival, LocalDateTime> customerArrivalProcess
                 = new SimpleRecurringEventProcess<>(CustomerArrival::new,
-                NextTimeFactory.withElapsedTimeSupplierInUnits(new ExponentialDistribution(10.0)::sample,
+                NextEventTimeFactory.withElapsedTimeSupplierInUnits(new ExponentialDistribution(10.0)::sample,
                         ChronoUnit.SECONDS));
 
         final LocalDateTime end = LocalDateTime.now().plusDays(1);

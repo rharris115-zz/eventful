@@ -6,8 +6,8 @@ import java.time.temporal.TemporalUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-public final class NextTimeFactory {
-    private NextTimeFactory() {
+public final class NextEventTimeFactory {
+    private NextEventTimeFactory() {
     }
 
     public static Function<LocalDateTime, LocalDateTime> withElapsedTimeSupplierInUnits(Supplier<Double> elapsedTimeSupplier, TemporalUnit unit) {
