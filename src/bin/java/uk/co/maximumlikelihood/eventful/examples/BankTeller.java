@@ -27,12 +27,17 @@ public class BankTeller {
 
         @Override
         public void notifyArrival(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
-
+            System.out.printf("%s arriving at queue @t=%s\n", this, time);
         }
 
         @Override
         public void notifyConsumptionStart(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
+            System.out.printf("%s started being serviced @t=%s\n", this, time);
+        }
 
+        @Override
+        public void notifyConsumptionFinish(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
+            System.out.printf("%s finished being serviced at queue @t=%s\n", this, time);
         }
     }
 
@@ -44,7 +49,6 @@ public class BankTeller {
         final CapacitatedEntityQueueConsumer<Customer, LocalDateTime> queueConsumer
                 = new CapacitatedEntityQueueConsumer<>(ElapsedTimeFactory.withElapsedTimeSupplierInUnits(new ExponentialDistribution(20.0)::sample, ChronoUnit.SECONDS),
                 () -> fe -> {
-                    System.out.println("Done!");
                 },
                 2);
 
@@ -63,7 +67,7 @@ public class BankTeller {
         customerArrivalProcess.scheduleNext(futureEvents);
 
         while (futureEvents.hasNext() && futureEvents.getCurrentTime().isBefore(end)) {
-            System.out.printf(" at t=%s\n", futureEvents.next());
+            futureEvents.next();
         }
     }
 }

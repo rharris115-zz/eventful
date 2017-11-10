@@ -10,15 +10,15 @@ public class CapacitatedEntityQueueConsumer<E extends QueueableEntity<E, T>, T e
 
     private final Function<T, T> consumptionTimeFactory;
 
-    private final Supplier<EventTask<T>> consumptionTask;
+    private final Supplier<EventTask<T>> consumptionTaskFactory;
 
     private final int capacity;
 
     private int utilisation = 0;
 
-    public CapacitatedEntityQueueConsumer(Function<T, T> consumptionTimeFactory, Supplier<EventTask<T>> consumptionTask, int capacity) {
+    public CapacitatedEntityQueueConsumer(Function<T, T> consumptionTimeFactory, Supplier<EventTask<T>> consumptionTaskFactory, int capacity) {
         this.consumptionTimeFactory = consumptionTimeFactory;
-        this.consumptionTask = consumptionTask;
+        this.consumptionTaskFactory = consumptionTaskFactory;
         this.capacity = capacity;
     }
 
@@ -28,19 +28,22 @@ public class CapacitatedEntityQueueConsumer<E extends QueueableEntity<E, T>, T e
     }
 
     @Override
-    public void consume(E entity, EntityQueue<E, T> queue, FutureEventsQueue<T> futureEvents) {
+    public void consumeStart(E entity, EntityQueue<E, T> queue, FutureEventsQueue<T> futureEvents) {
         if (!canConsume(entity)) {
             throw new IllegalStateException();
         }
         utilisation++;
+        entity.notifyConsumptionStart(queue, futureEvents.getCurrentTime());
         T consumptionEndTime = consumptionTimeFactory.apply(futureEvents.getCurrentTime());
-        futureEvents.schedule(consumptionEndTime, consumptionTask.get().andThen(feq -> {
-            free();
-            queue.notifyCanConsume(feq);
+        futureEvents.schedule(consumptionEndTime, consumptionTaskFactory.get().andThen(feq -> {
+            consumeFinish(entity, queue, feq);
         }));
     }
 
-    private void free() {
+    @Override
+    public void consumeFinish(E entity, EntityQueue<E, T> queue, FutureEventsQueue<T> futureEvents) {
+        entity.notifyConsumptionFinish(queue, futureEvents.getCurrentTime());
         utilisation--;
+        queue.notifyCanConsume(futureEvents);
     }
 }

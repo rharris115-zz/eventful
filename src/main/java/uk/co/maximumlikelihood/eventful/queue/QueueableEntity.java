@@ -6,6 +6,8 @@ public interface QueueableEntity<E extends QueueableEntity<E, T>, T extends Comp
 
     void notifyConsumptionStart(EntityQueue<E, T> queue, T time);
 
+    void notifyConsumptionFinish(EntityQueue<E, T> queue, T time);
+
     default void notifyArrivalAndConsumptionStart(EntityQueue<E, T> queue, T time) {
         notifyArrival(queue, time);
         notifyConsumptionStart(queue, time);

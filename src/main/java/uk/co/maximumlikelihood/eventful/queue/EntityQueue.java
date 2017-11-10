@@ -21,7 +21,7 @@ public final class EntityQueue<E extends QueueableEntity<E, T>, T extends Compar
 
     public void notifyArrival(E entity, FutureEventsQueue<T> futureEvents) {
         if (consumer.canConsume(entity)) {
-            consumer.consume(entity, this, futureEvents);
+            consumer.consumeStart(entity, this, futureEvents);
             entity.notifyArrivalAndConsumptionStart(this, futureEvents.getCurrentTime());
         } else {
             queue.add(entity);
@@ -34,11 +34,10 @@ public final class EntityQueue<E extends QueueableEntity<E, T>, T extends Compar
             return;
         }
         if (!consumer.canConsume(queue.peek())) {
-            throw new IllegalStateException("Consumer cannot consume an entity despite notification that it can.");
+            throw new IllegalStateException("Consumer cannot consumeStart an entity despite notification that it can.");
         }
         E entity = queue.poll();
-        consumer.consume(entity, this, futureEvents);
-        entity.notifyConsumptionStart(this, futureEvents.getCurrentTime());
+        consumer.consumeStart(entity, this, futureEvents);
     }
 
     public Queue<E> getQueue() {
