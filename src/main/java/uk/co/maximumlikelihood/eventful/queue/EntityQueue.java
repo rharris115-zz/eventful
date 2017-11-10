@@ -13,38 +13,38 @@ public final class EntityQueue<E extends QueueableEntity<E, T>, T extends Compar
     private final UnmodifiableQueue<E> unmodifiableQueue = new UnmodifiableQueue<>(queue);
 
 
-    private final EntityQueueConsumer<E, T> consumer;
+    private final EntityQueueServer<E, T> server;
 
-    public EntityQueue(EntityQueueConsumer<E, T> consumer) {
-        this.consumer = requireNonNull(consumer, "consumer");
+    public EntityQueue(EntityQueueServer<E, T> server) {
+        this.server = requireNonNull(server, "server");
     }
 
     public void notifyArrival(E entity, FutureEventsQueue<T> futureEvents) {
-        if (consumer.canConsume(entity)) {
-            consumer.consumeStart(entity, this, futureEvents);
-            entity.notifyArrivalAndConsumptionStart(this, futureEvents.getCurrentTime());
+        entity.notifyArrival(this, futureEvents.getCurrentTime());
+        if (server.canServe(entity)) {
+            server.startServing(entity, this, futureEvents);
         } else {
             queue.add(entity);
-            entity.notifyArrival(this, futureEvents.getCurrentTime());
+            entity.notifyEnterringQueue(this, futureEvents.getCurrentTime());
         }
     }
 
-    public void notifyCanConsume(FutureEventsQueue<T> futureEvents) {
+    public void notifyCanServe(FutureEventsQueue<T> futureEvents) {
         if (queue.isEmpty()) {
             return;
         }
-        if (!consumer.canConsume(queue.peek())) {
-            throw new IllegalStateException("Consumer cannot consumeStart an entity despite notification that it can.");
+        if (!server.canServe(queue.peek())) {
+            throw new IllegalStateException("Server cannot start serving an entity despite notification that it can.");
         }
         E entity = queue.poll();
-        consumer.consumeStart(entity, this, futureEvents);
+        server.startServing(entity, this, futureEvents);
     }
 
     public Queue<E> getQueue() {
         return unmodifiableQueue;
     }
 
-    public EntityQueueConsumer<E, T> getConsumer() {
-        return consumer;
+    public EntityQueueServer<E, T> getServer() {
+        return server;
     }
 }

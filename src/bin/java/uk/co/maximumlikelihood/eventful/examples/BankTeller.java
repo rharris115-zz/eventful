@@ -3,7 +3,7 @@ package uk.co.maximumlikelihood.eventful.examples;
 import org.apache.commons.math3.distribution.ExponentialDistribution;
 import uk.co.maximumlikelihood.eventful.event.FutureEventsQueue;
 import uk.co.maximumlikelihood.eventful.process.SimpleRecurringEventProcess;
-import uk.co.maximumlikelihood.eventful.queue.CapacitatedEntityQueueConsumer;
+import uk.co.maximumlikelihood.eventful.queue.CapacitatedEntityQueueServer;
 import uk.co.maximumlikelihood.eventful.queue.EntityQueue;
 import uk.co.maximumlikelihood.eventful.queue.QueueArrivalTask;
 import uk.co.maximumlikelihood.eventful.queue.QueueableEntity;
@@ -31,12 +31,17 @@ public class BankTeller {
         }
 
         @Override
-        public void notifyConsumptionStart(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
+        public void notifyEnterringQueue(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
+            System.out.printf("%s enterring queue @t=%s\n", this, time);
+        }
+
+        @Override
+        public void notifyServiceStart(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
             System.out.printf("%s started being serviced @t=%s\n", this, time);
         }
 
         @Override
-        public void notifyConsumptionFinish(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
+        public void notifyServiceFinish(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
             System.out.printf("%s finished being serviced at queue @t=%s\n", this, time);
         }
     }
@@ -46,8 +51,8 @@ public class BankTeller {
         final FutureEventsQueue<LocalDateTime> futureEvents = FutureEventsQueue.starting(LocalDateTime.now());
 
 
-        final CapacitatedEntityQueueConsumer<Customer, LocalDateTime> queueConsumer
-                = new CapacitatedEntityQueueConsumer<>(ElapsedTimeFactory.withElapsedTimeSupplierInUnits(new ExponentialDistribution(20.0)::sample, ChronoUnit.SECONDS),
+        final CapacitatedEntityQueueServer<Customer, LocalDateTime> queueConsumer
+                = new CapacitatedEntityQueueServer<>(ElapsedTimeFactory.withElapsedTimeSupplierInUnits(new ExponentialDistribution(20.0)::sample, ChronoUnit.SECONDS),
                 () -> fe -> {
                 },
                 2);
