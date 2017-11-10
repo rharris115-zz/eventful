@@ -6,9 +6,9 @@ import uk.co.maximumlikelihood.eventful.event.FutureEventsQueue;
 public class RecurringEventTask<E extends EventTask<T>, T extends Comparable<? super T>> implements EventTask<T> {
 
     private RecurringEventProcess<E, T> process;
-    private EventTask<T> delegate;
+    private E delegate;
 
-    public RecurringEventTask(RecurringEventProcess<E, T> process, EventTask<T> delegate) {
+    public RecurringEventTask(RecurringEventProcess<E, T> process, E delegate) {
         this.process = process;
         this.delegate = delegate;
     }
