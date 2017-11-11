@@ -18,8 +18,4 @@ public final class Suppliers {
                                                      Supplier<U> uSupplier) {
         return () -> biFunction.apply(tSupplier.get(), uSupplier.get());
     }
-
-    public static <R> Supplier<R> ofConstant(R r) {
-        return () -> r;
-    }
 }

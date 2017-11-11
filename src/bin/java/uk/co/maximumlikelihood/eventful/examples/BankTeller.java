@@ -64,7 +64,7 @@ public class BankTeller {
         final EntityQueue<Customer, LocalDateTime> queue = new EntityQueue<>(queueProcessor);
 
         final Supplier<EventTask<LocalDateTime>> arrivals
-                = Suppliers.ofBiFunction(QueueArrivalTask::new, Customer::new, Suppliers.ofConstant(queue));
+                = Suppliers.ofBiFunction(QueueArrivalTask::new, Customer::new, () -> queue);
 
         final Function<LocalDateTime, LocalDateTime> arrivalTimes
                 = ElapsedTimeFactory.withSupplierInUnits(new ExponentialDistribution(10.0)::sample,
