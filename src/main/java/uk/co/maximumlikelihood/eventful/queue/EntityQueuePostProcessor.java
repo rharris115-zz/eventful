@@ -23,11 +23,11 @@ public interface EntityQueuePostProcessor<E extends QueueableEntity<E, T>, T ext
                 .andThen(feq -> {
                     stopProcessing(entity, queue, feq);
                 }));
-        entity.notifyServiceStart(queue, startTime);
+        entity.notifyQueuePostProcessingStart(queue, startTime);
     }
 
     default void stopProcessing(E entity, EntityQueue<E, T> queue, FutureEventsQueue<T> futureEvents) {
-        entity.notifyServiceFinish(queue, futureEvents.getCurrentTime());
+        entity.notifyQueuePostProcessingFinish(queue, futureEvents.getCurrentTime());
         queue.notifyCanServe(futureEvents);
     }
 }

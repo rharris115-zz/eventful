@@ -30,7 +30,7 @@ public class BankTeller {
         }
 
         @Override
-        public void notifyArrival(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
+        public void notifyQueueArrival(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
             System.out.printf("%s arriving at queue @t=%s\n", this, time);
         }
 
@@ -40,12 +40,12 @@ public class BankTeller {
         }
 
         @Override
-        public void notifyServiceStart(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
+        public void notifyQueuePostProcessingStart(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
             System.out.printf("%s started being serviced @t=%s\n", this, time);
         }
 
         @Override
-        public void notifyServiceFinish(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
+        public void notifyQueuePostProcessingFinish(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
             System.out.printf("%s finished being serviced @t=%s\n", this, time);
         }
     }

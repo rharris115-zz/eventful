@@ -20,7 +20,7 @@ public final class EntityQueue<E extends QueueableEntity<E, T>, T extends Compar
     }
 
     public void notifyArrival(E entity, FutureEventsQueue<T> futureEvents) {
-        entity.notifyArrival(this, futureEvents.getCurrentTime());
+        entity.notifyQueueArrival(this, futureEvents.getCurrentTime());
         if (server.canProcess(entity)) {
             server.startProcessing(entity, this, futureEvents);
         } else {
