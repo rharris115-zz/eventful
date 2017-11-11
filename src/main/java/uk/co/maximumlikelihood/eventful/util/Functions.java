@@ -9,11 +9,11 @@ public final class Functions {
     private Functions() {
     }
 
-    public static <T, U, R> Function<T, R> ofBiFunctionsFirstArgument(BiFunction<T, U, R> bFunction, Supplier<U> uSupplier) {
-        return (t) -> bFunction.apply(t, uSupplier.get());
+    public static <T, U, R> Function<T, R> ofBiFunctionsFirstArgument(BiFunction<T, U, R> biFunction, Supplier<U> uSupplier) {
+        return (t) -> biFunction.apply(t, uSupplier.get());
     }
 
-    public static <T, U, R> Function<U, R> ofBiFunctionsSecondArgument(BiFunction<T, U, R> bFunction, Supplier<T> tSupplier) {
-        return (u) -> bFunction.apply(tSupplier.get(), u);
+    public static <T, U, R> Function<U, R> ofBiFunctionsSecondArgument(BiFunction<T, U, R> biFunction, Supplier<T> tSupplier) {
+        return (u) -> biFunction.apply(tSupplier.get(), u);
     }
 }
