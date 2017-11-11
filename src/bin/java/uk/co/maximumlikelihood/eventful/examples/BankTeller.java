@@ -56,7 +56,7 @@ public class BankTeller {
 
 
         final CapacitatedEntityQueueServer<Customer, LocalDateTime> queueConsumer
-                = new CapacitatedEntityQueueServer<>(ElapsedTimeFactory.withElapsedTimeSupplierInUnits(new ExponentialDistribution(20.0)::sample, ChronoUnit.SECONDS),
+                = new CapacitatedEntityQueueServer<>(ElapsedTimeFactory.withSupplierInUnits(new ExponentialDistribution(20.0)::sample, ChronoUnit.SECONDS),
                 () -> fe -> {
                 },
                 2);
@@ -67,7 +67,7 @@ public class BankTeller {
                 = Suppliers.ofBiFunction(QueueArrivalTask::new, Customer::new, Suppliers.ofConstant(queue));
 
         final Function<LocalDateTime, LocalDateTime> arrivalTimes
-                = ElapsedTimeFactory.withElapsedTimeSupplierInUnits(new ExponentialDistribution(10.0)::sample,
+                = ElapsedTimeFactory.withSupplierInUnits(new ExponentialDistribution(10.0)::sample,
                 ChronoUnit.SECONDS);
 
         final SimpleRecurringEventProcess<LocalDateTime> customerArrivalProcess
