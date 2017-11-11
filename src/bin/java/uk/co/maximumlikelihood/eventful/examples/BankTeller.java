@@ -35,7 +35,7 @@ public class BankTeller {
         }
 
         @Override
-        public void notifyEnterringQueue(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
+        public void notifyEnteringQueue(EntityQueue<Customer, LocalDateTime> queue, LocalDateTime time) {
             System.out.printf("%s enterring queue @t=%s\n", this, time);
         }
 

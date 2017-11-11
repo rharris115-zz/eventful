@@ -25,7 +25,7 @@ public final class EntityQueue<E extends QueueableEntity<E, T>, T extends Compar
             server.startProcessing(entity, this, futureEvents);
         } else {
             queue.add(entity);
-            entity.notifyEnterringQueue(this, futureEvents.getCurrentTime());
+            entity.notifyEnteringQueue(this, futureEvents.getCurrentTime());
         }
     }
 
