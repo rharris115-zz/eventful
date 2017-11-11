@@ -4,7 +4,7 @@ import org.apache.commons.math3.distribution.ExponentialDistribution;
 import uk.co.maximumlikelihood.eventful.event.EventTask;
 import uk.co.maximumlikelihood.eventful.event.FutureEventsQueue;
 import uk.co.maximumlikelihood.eventful.process.SimpleRecurringEventProcess;
-import uk.co.maximumlikelihood.eventful.queue.CapacitatedEntityQueueServer;
+import uk.co.maximumlikelihood.eventful.queue.CapacitatedEntityQueuePostProcessor;
 import uk.co.maximumlikelihood.eventful.queue.EntityQueue;
 import uk.co.maximumlikelihood.eventful.queue.QueueArrivalTask;
 import uk.co.maximumlikelihood.eventful.queue.QueueableEntity;
@@ -55,13 +55,13 @@ public class BankTeller {
         final FutureEventsQueue<LocalDateTime> futureEvents = FutureEventsQueue.starting(LocalDateTime.now());
 
 
-        final CapacitatedEntityQueueServer<Customer, LocalDateTime> queueConsumer
-                = new CapacitatedEntityQueueServer<>(ElapsedTimeFactory.withSupplierInUnits(new ExponentialDistribution(20.0)::sample, ChronoUnit.SECONDS),
+        final CapacitatedEntityQueuePostProcessor<Customer, LocalDateTime> queueProcessor
+                = new CapacitatedEntityQueuePostProcessor<>(ElapsedTimeFactory.withSupplierInUnits(new ExponentialDistribution(20.0)::sample, ChronoUnit.SECONDS),
                 () -> fe -> {
                 },
                 2);
 
-        final EntityQueue<Customer, LocalDateTime> queue = new EntityQueue<>(queueConsumer);
+        final EntityQueue<Customer, LocalDateTime> queue = new EntityQueue<>(queueProcessor);
 
         final Supplier<EventTask<LocalDateTime>> arrivals
                 = Suppliers.ofBiFunction(QueueArrivalTask::new, Customer::new, Suppliers.ofConstant(queue));

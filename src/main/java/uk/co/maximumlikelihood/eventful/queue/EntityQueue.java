@@ -13,16 +13,16 @@ public final class EntityQueue<E extends QueueableEntity<E, T>, T extends Compar
     private final UnmodifiableQueue<E> unmodifiableQueue = new UnmodifiableQueue<>(queue);
 
 
-    private final EntityQueueServer<E, T> server;
+    private final EntityQueuePostProcessor<E, T> server;
 
-    public EntityQueue(EntityQueueServer<E, T> server) {
+    public EntityQueue(EntityQueuePostProcessor<E, T> server) {
         this.server = requireNonNull(server, "server");
     }
 
     public void notifyArrival(E entity, FutureEventsQueue<T> futureEvents) {
         entity.notifyArrival(this, futureEvents.getCurrentTime());
-        if (server.canServe(entity)) {
-            server.startServing(entity, this, futureEvents);
+        if (server.canProcess(entity)) {
+            server.startProcessing(entity, this, futureEvents);
         } else {
             queue.add(entity);
             entity.notifyEnterringQueue(this, futureEvents.getCurrentTime());
@@ -33,18 +33,18 @@ public final class EntityQueue<E extends QueueableEntity<E, T>, T extends Compar
         if (queue.isEmpty()) {
             return;
         }
-        if (!server.canServe(queue.peek())) {
+        if (!server.canProcess(queue.peek())) {
             throw new IllegalStateException("Server cannot start serving an entity despite notification that it can.");
         }
         E entity = queue.poll();
-        server.startServing(entity, this, futureEvents);
+        server.startProcessing(entity, this, futureEvents);
     }
 
     public Queue<E> getQueue() {
         return unmodifiableQueue;
     }
 
-    public EntityQueueServer<E, T> getServer() {
+    public EntityQueuePostProcessor<E, T> getServer() {
         return server;
     }
 }
