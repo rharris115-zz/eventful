@@ -1,10 +1,8 @@
 package uk.co.maximumlikelihood.eventful.event;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
-import java.util.*;
+import static org.junit.Assert.assertEquals;
 
 public final class FutureEventsQueueTest {
 

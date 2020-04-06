@@ -1,8 +1,9 @@
 package uk.co.maximumlikelihood.eventful.event;
 
-import java.time.Duration;
-import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+import java.util.PriorityQueue;
+import java.util.Queue;
 
 import static java.util.Objects.requireNonNull;
 
